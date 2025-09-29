@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="dns-prefetch" href="https://script.google.com">
+  <link rel="preconnect" href="https://script.google.com" crossorigin>
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+  <title>Sergey&Lilit</title>
+  <style>
+    /* Ֆոնտերի միացում */
+    @font-face {
+      font-family: 'Kamavor';
+      src: url('Kamavor-NA.otf') format('opentype');
+    }
+
+    @font-face {
+      font-family: 'Brittany';
+      src: url('BrittanySignature.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Maler';
+      src: url('Maler.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Montserratarm-Light';
+      src: url('Montserratarm-Light.otf') format('opentype');
+    }
+      @font-face {
+        font-family: 'Montserratarm-Regular';
+        src: url('Montserratarm-Regular.otf') format('opentype');
+      }
+      @font-face {
+          font-family: 'Bold';
+          src: url('Bold.otf') format('opentype');
+        }
+      @font-face {
+        font-family: 'Montserratarm-Medium';
+        src: url('Montserratarm-Medium.otf') format('opentype');
+      }
+    @font-face {
+      font-family: 'Montserratarm-SemiBold';
+      src: url('Montserratarm-SemiBold.otf') format('opentype');
+    }
+
+    /* Global spacing variables for consistency */
+    :root {
+      --section-spacing: 50px;
+      --element-spacing: 25px;
+      --small-spacing: 15px;
+      --large-spacing: 60px;
+    }
+
+    /* ՆՈՐ - Երգի կոճակի ստիլ */
+    .music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: rgba(59, 59, 40, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .music-control:hover {
+      background: rgba(59, 59, 40, 1);
+      transform: scale(1.1);
+    }
+
+    .music-control.playing {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(59, 59, 40, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(59, 59, 40, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 59, 40, 0); }
+    }
+
+    /* ՆՈՐ - Առաջին բացման popup */
+    .music-welcome {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .music-welcome.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .music-welcome-content {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 350px;
+      margin: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .music-welcome h3 {
+      font-family: 'Kamavor', sans-serif;
+      font-size: 24px;
+      color: #3B3B28;
+      margin-bottom: 15px;
+    }
+
+    .music-welcome p {
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 25px;
+      line-height: 1.4;
+    }
+
+    .music-welcome button {
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 18px;
+      color: white;
+      background: #3B3B28;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+
+    .music-welcome button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .music-welcome button.secondary {
+      background: #888;
+    }
+
+    /* Մնացած ստիլները... */
+    body {
+      background-color: #D9D9D9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .image-wrapper {
+      position: relative;
+      width: 100vw;
+      height: auto;
+      margin-bottom: var(--section-spacing);
+    }
+
+    #main-image {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Davit & Ani + Ամսաթիվ */
+    .overlay-text {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #FFFFFF;
+      font-size: 48px;
+      font-family: 'Brittany', cursive;
+      text-align: center;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .names {
+      bottom: 20%;
+    }
+
+    .date {
+      font-size: 15px;
+      bottom: 12%;
+      font-family: '', sans-serif;
+    }
+
+    /* Հրավերի ուղերձ */
+    .invitation-message {
+      color: #3B3B28;
+      font-family: 'Kamavor', sans-serif;
+      font-size: 24px;
+      text-align: center;
+      margin: var(--section-spacing) 20px var(--element-spacing);
+      letter-spacing: 2px;
+      line-height: 1.5;
+    }
+
+    .invitation-sub {
+      text-align: center;
+      margin: 0 20px var(--section-spacing);
+      font-family: 'Montserratarm-Medium', sans-serif;
+    }
+
+    /* Կալենդար */
+    .calendar {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      max-width: 350px;
+      margin: 0 auto var(--section-spacing);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+
+    .calendar-header div {
+      font-size: 40px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .days, .dates {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0px;
+    }
+
+    .days div {
+      font-weight: bold;
+      text-align: center;
+      padding: 8px 4px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .dates div {
+      padding: 8px 4px;
+      font-size: 16px;
+      text-align: center;
+      color: #333;
+    }
+
+    .heart {
+      position: relative;
+      color: transparent;
+    }
+
+    .heart::before {
+      content: "5";
+      color: #fff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+    .heart::after {
+      content: "♥";
+      font-size: 40px;
+      color: #b69a7c;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+    }
+
+    /* Ամսաթվի բար */
+    .date-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: var(--section-spacing) 40px;
+      color: #3B3B28;
+      font-family: 'Montserratarm', sans-serif;
+      gap: 20px;
+    }
+
+    .side-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100px;
+    }
+
+    .side-block .line-top {
+      width: 100%;
+      height: 0.5px;
+      background-color: #3B3B28;
+      margin-bottom: 6px;
+      opacity: 0.3;
+      border-radius: 1px;
+    }
+
+    .side-block .line-bottom {
+      width: 100%;
+      height: 0.5px;
+      background-color: #3B3B28;
+      margin-top: 6px;
+      opacity: 0.3;
+      border-radius: 1px;
+    }
+
+    .side-block .text {
+      font-family:'Montserratarm-Medium',sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .center-block {
+      font-size: 50px;
+      font-family: 'Bold';
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Եկեղեցու բաժին */
+    .center-block-church {
+      text-align: center;
+      margin: var(--section-spacing) auto;
+      padding: 0 20px;
+    }
+
+    .church-image {
+      max-width: 90px;
+      height: auto;
+      margin-bottom: var(--small-spacing);
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .church-caption {
+      margin-top: 6px;
+      margin-bottom: var(--element-spacing);
+      font-family: 'Kamavor';
+      font-size: 25px;
+      color: #3B3B28;
+      user-select: none;
+    }
+
+    .church-description {
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 16px;
+      color: #3B3B28;
+      max-width: 300px;
+      margin: 0 auto var(--small-spacing);
+      line-height: 1.3;
+    }
+
+    .church-time {
+      margin-bottom: var(--element-spacing);
+      font-family: 'Montserratarm-SemiBold', sans-serif;
+      font-size: 16px;
+      color: #3B3B28;
+    }
+
+    .how-to-reach {
+      background-color: #3B3B28;
+      color: white;
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 16px;
+      padding: 8px 24px;
+      border-radius: 30px;
+      display: inline-block;
+      letter-spacing: 1px;
+      text-align: center;
+      user-select: none;
+      transition: 0.3s ease;
+      text-decoration: none; 
+    }
+
+    .how-to-reach:hover {
+      opacity: 0.85;
+      cursor: pointer;
+    }
+
+    /* Ռեստորանի բաժին */
+    .center-block-rest {
+      text-align: center;
+      margin: var(--section-spacing) auto;
+      padding: 0 20px;
+    }
+
+    .cup-image {
+      max-width: 90px;
+      height: auto;
+      margin-bottom: var(--small-spacing);
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .rest-caption {
+      margin-top: 6px;
+      margin-bottom: var(--element-spacing);
+      font-family: 'Kamavor';
+      font-size: 30px;
+      color: #3B3B28;
+      user-select: none;
+    }
+
+    .rest-description {
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 16px;
+      color: #3B3B28;
+      max-width: 300px;
+      margin: 0 auto var(--small-spacing);
+      line-height: 1.3;
+    }
+
+    .rest-time {
+      margin-bottom: var(--element-spacing);
+      font-family: 'Montserratarm-SemiBold', sans-serif;
+      font-size: 16px;
+      color: #3B3B28;
+    }
+
+    /* Ներքևի նկարը */
+    .bottom-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: var(--large-spacing) 0;
+      user-select: none;
+    }
+    
+
+    /* Օրակարգի բաժիններ */
+    .center-block-schedule,
+    .center-block-bride,
+    .center-block-fest {
+      text-align: center;
+      margin: var(--section-spacing) auto;
+      padding: 0 20px;
+    }
+
+    .map-image,
+    .ring-image,
+    .apse-image {
+      max-width: 90px;
+      height: auto;
+      margin-bottom: var(--small-spacing);
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .groom-description,
+    .bride-description,
+    .fest-description {
+      margin-bottom: var(--small-spacing);
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 16px;
+      color: #3B3B28;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.3;
+    }
+
+    .groom-time,
+    .bride-time,
+    .fest-time {
+      font-family: 'Montserratarm-SemiBold', sans-serif;
+      font-size: 16px;
+      color: #3B3B28;
+    }
+
+    /* Վերջի նկարը */
+    .last-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: var(--large-spacing) 0;
+      user-select: none;
+    }
+
+    /* ՄՆԱՑ տեքստ */
+    .text-below {
+      color: #3B3B28;
+      font-size: 25px;
+      font-family: 'Kamavor', sans-serif;
+      text-align: center;
+      margin: var(--section-spacing) 20px var(--element-spacing);
+    }
+
+    /* Քաունթդաուն */
+    .countdown {
+      color: #3B3B28;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 0 20px var(--section-spacing);
+      text-align: center;
+    }
+
+    .time-part .number {
+      font-size: 42px;
+      font-family: 'Maler';
+    }
+
+    .time-part .label {
+      font-size: 20px;
+      margin-top: 5px;
+      font-family: 'Maler', sans-serif;
+    }
+
+    /* Հայտարարություններ */
+    .speech-caption {
+      margin: var(--section-spacing) 20px var(--element-spacing);
+      font-family: 'Kamavor';
+      font-size: 25px;
+      color: #3B3B28;
+      user-select: none;
+      text-align: center;
+    }
+
+    .speech-description {
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 16px;
+      color: #3B3B28;
+      max-width: 350px;
+      margin: 0 auto var(--section-spacing);
+      line-height: 1.4;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    /* RSVP ֆորմ */
+    .name-fields {
+      margin: var(--section-spacing) auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--small-spacing);
+      align-items: center;
+      max-width: 300px;
+      padding: 0 20px;
+    }
+
+    .name-input {
+      width: 100%;
+      padding: 12px 16px;
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 16px;
+      color: #3B3B28;
+      background-color: white;
+      border: 1px solid #3B3B28;
+      border-radius: 25px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .name-input::placeholder {
+      color: #888;
+    }
+
+    .name-input:focus {
+      border-color: #4c4731;
+      box-shadow: 0 0 0 2px rgba(76, 71, 49, 0.1);
+    }
+
+    .button-wrapper {
+      margin-top: var(--element-spacing);
+      margin-bottom: var(--large-spacing);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .btn {
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 22px;
+      color: white;
+      padding: 12px 45px;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-yes {
+      background-color: #4c4731;
+    }
+
+    .btn-no {
+      background-color: #7b685b;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn.selected {
+      opacity: 0.8;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Հաղորդագրություններ */
+    .confirmation-message {
+      position: fixed;
+      top: 145px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 18px;
+      color: #4c4731;
+      text-align: center;
+      opacity: 0;
+      transition: all 0.5s ease;
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 20px 30px;
+      border-radius: 20px;
+      border: 1px solid #4c4731;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+      max-width: 350px;
+      pointer-events: none;
+    }
+
+    .confirmation-message.show {
+      opacity: 1;
+      animation: slideInFromTop 0.6s ease-out;
+    }
+
+    .confirmation-message.hide {
+      animation: slideOutToTop 0.5s ease-in;
+    }
+
+    .error-message {
+      color: #d32f2f !important;
+      border-color: #d32f2f !important;
+      background-color: rgba(255, 235, 238, 0.95) !important;
+    }
+
+    @keyframes slideInFromTop {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    @keyframes slideOutToTop {
+      from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-100px);
+      }
+    }
+
+    .success-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .message-title {
+      font-family: 'Kamavor', sans-serif;
+      font-size: 22px;
+      margin-bottom: 8px;
+      color: #4c4731;
+    }
+
+    .message-text {
+      font-family: 'Montserratarm-Medium', sans-serif;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    /* Մոբայլ ադապտացիա */
+    @media (max-width: 768px) {
+      .music-control {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        top: 15px;
+        right: 15px;
+      }
+
+      .countdown {
+        gap: 20px;
+      }
+
+      .time-part .number {
+        font-size: 32px;
+      }
+
+      .time-part .label {
+        font-size: 16px;
+      }
+    }
+    .music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(59,59,40,0.9);
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: 0.3s;
+      z-index: 1000;
+    }
+
+    .music-btn.playing {
+      background: #b69a7c;
+    }
+    
+    /* Կոնտեյներ լուսանկարների համար */
+ .image-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+    }
+    
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+    }
+    .image-wrapper {
+      position: relative;
+      width: 100vw;
+      height: auto;
+    }
+
+    #main-image {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Davit & Ani + Ամսաթիվ */
+    .overlay-text {
+      position: absolute;
+      left: 50%;   
+      transform: translateX(-50%);
+      color: #FFFFFF;
+      font-size: 48px;
+      font-family: 'Brittany', cursive;
+      text-align: center;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .names {
+      bottom: 20%;
+    }
+
+    .date {
+      font-size: 15px;
+      bottom: 12%;
+      font-family: '', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <!-- Երաժշտության կոճակ -->
+  <!-- Երաժշտության կոճակ -->
+  <button class="music-btn" id="musicBtn" title="Երաժշտություն">🎵</button>
+
+  <!-- Երաժշտության ֆայլ -->
+  <audio id="backgroundMusic" loop preload="auto">
+    <source src="sirohetq.mp3" type="audio/mpeg">
+    <source src="wedding-music.ogg" type="audio/ogg">
+  </audio>
+  <!-- Նկարը և վերին տեքստերը -->
+  <div class="image-wrapper">
+    <img src="/Новая папка/firzt.png" alt="Նկար" id="main-image">
+    <div class="overlay-text names">Davit & Ani</div>
+    <div class="overlay-text date">29․11․2025</div>
+  </div>
+  <!-- Հրավերի ուղերձ -->
+  <div class="invitation-message">
+     Ուրախ  ենք հրավիրել Ձեզ՝ <br>  մեր հարսանիքին։
+  </div>
+  <p class="invitation-sub"> Ցանկանում ենք որ այդ օրը մեր կողքին <br> լինեն հարազատ և թանկագին մարդիկ</p>
+  
+  <div class="calendar">
+    <div class="calendar-header">
+      <div>Հոկտեմբեր</div>
+      <div>2025</div>
+    </div>
+    <div class="days">
+      <div>Երկ</div><div>Երք</div><div>Չրք</div><div>Հնգ</div>
+      <div>Ուրբ</div><div>Շբթ</div><div>Կիր</div>
+    </div>
+    <div class="dates">
+      <div></div><div></div><div>1</div><div>2</div><div>3</div><div>4</div><div class="heart">5</div>
+      <div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div>
+      <div>13</div><div>14</div><div>15</div><div>16</div><div>17</div><div>18</div><div>19</div>
+      <div>20</div><div>21</div><div>22</div><div>23</div><div>24</div><div>25</div><div>26</div>
+      <div>27</div><div>28</div><div>29</div><div>30</div><div>31</div>
+    </div>
+  </div>
+
+  <div class="date-bar">
+    <div class="side-block">
+      <div class="line-top"></div>
+      <div class="text">Հոկտեմբեր</div>
+      <div class="line-bottom"></div>
+    </div>
+    <div class="center-block"> 05 </div>
+    <div class="side-block">
+      <div class="line-top"></div>
+      <div class="text">Կիրակի</div>
+      <div class="line-bottom"></div>
+    </div>
+  </div>
+
+  <div class="center-block-church">
+    <img src="ekexeci.png" alt="Եկեղեցի" class="church-image">
+   <div class="church-caption">ԱՐԱՐՈՂՈՒԹՅՈՒՆ</div>
+        <div class="church-description">
+          Պսակադրությունը տեղի կունենա <br> Սբ․ Երրորդություն եկեղեցում
+        </div>
+        <div class="church-time">
+          Ժամը 14։00
+        </div>
+    <a href="https://maps.app.goo.gl/VgBimMkpJQ5VByGh8" target="_blank" class="how-to-reach">ԻՆՉՊԵՍ ՀԱՍՆԵԼ</a>
+  </div>
+
+ <div class="center-block-rest">
+   <img src="bajak.png" alt="բաժակ" class="cup-image">
+  <div class="rest-caption">ԵՐԵԿՈՒՅԹ</div>
+       <div class="rest-description">
+         «Morena Hall»<br> ՌԵՍՏՈՐԱՆԱՅԻՆ ՀԱՄԱԼԻՐ
+       </div>
+       <div class="rest-time">
+         Մեկնարկը՝ 17։30         
+       </div>
+   <a href="https://maps.app.goo.gl/p2boRPR1U7NYBcup6" target="_blank" class="how-to-reach">ԻՆՉՊԵՍ ՀԱՍՆԵԼ</a>
+ </div>
+
+  <!-- Ներքևի նկարը -->
+  <img src="/Новая папка/second.png" alt="Ներքևի նկար" class="bottom-image" />
+
+  <!--Օրակարգ-->
+  <div class="center-block-schedule">
+     <img src="qartez.png" alt="քարտեզ" class="map-image">
+         <div class="groom-description">
+           Փեսայի տուն
+         </div>
+         <div class="groom-time">
+             11։00   
+         </div>
+   </div>
+
+  <div class="center-block-bride">
+     <img src="matani.png" alt="մատանի" class="ring-image">
+         <div class="bride-description">
+           Հարսի տուն
+         </div>
+         <div class="bride-time">
+             12։00   
+         </div>
+   </div>
+
+  <div class="center-block-fest">
+     <img src="apse.png" alt="ապսե" class="apse-image">
+         <div class="fest-description">
+           Ռեստորան
+         </div>
+         <div class="fest-time">
+             17։30   
+         </div>
+   </div>
+
+
+<div class="image-container">
+    <img src="/Новая папка/third.png" alt="Photo 1">
+</div>
+    
+
+  
+  <!-- ՄՆԱՑ -->
+  <div class="text-below">ՄԵՐ ՀԱՐՍԱՆԻՔԻՆ ՄՆԱՑԵԼ Է</div>
+
+  <!-- Քաունթդաուն -->
+  <div class="countdown" id="countdown">
+    <div class="time-part">
+      <div class="number" id="days">00</div>
+      <div class="label">օր</div>
+    </div>
+    <div class="time-part">
+      <div class="number" id="hours">00</div>
+      <div class="label">ժամ</div>
+    </div>
+    <div class="time-part">
+      <div class="number" id="minutes">00</div>
+      <div class="label">րոպե</div>
+    </div>
+    <div class="time-part">
+      <div class="number" id="seconds">00</div>
+      <div class="label">վրկ․</div>
+    </div>
+  </div>
+
+  <!-- Հայտարարություն -->
+  <div class="speech-caption">ԶԳՈՒՇԱՑՈՒՄ!</div>
+  <div class="speech-description">
+    Սիրելի՛ հյուրեր, հարսի պարի ընթացքում խնդրում ենք երեխաներին պահել ձեր կողքին, շնորհակալ ենք ըմբռնման համար։
+  </div>
+  
+  <div class="speech-caption">ՍԻՐԵԼԻ  ԲԱՐԵԿԱՄ</div>
+  <div class="speech-description">
+    Մենք ցանկանում ենք քեզ հետ <br> կիսել  մեր կյանքի ամենակարևոր օրը
+  </div>
+  
+  <!-- RSVP Form -->
+  <form id="rsvpForm" class="name-fields">
+    <input type="text" name="firstName" class="name-input" placeholder="Անուն" required>
+    <input type="text" name="lastName" class="name-input" placeholder="Ազգանուն" required>
+    <input type="hidden" name="response" id="responseInput">
+    
+    <div class="button-wrapper">
+      <button type="button" class="btn btn-yes" onclick="setResponseAndSubmit('ԳԱԼԻՍ ԵՄ')">ԳԱԼԻՍ ԵՄ</button>
+      <button type="button" class="btn btn-no"  onclick="setResponseAndSubmit('ՉԵՄ ԳԱԼԻՍ')">ՉԵՄ ԳԱԼԻՍ</button>
+      <button type="submit" id="submitBtn" style="display: none;">Ուղարկել</button>
+    </div>
+    
+    <div class="confirmation-message" id="successMessage" style="display: none;"></div>
+    <div class="confirmation-message error-message" id="errorMessage" style="display: none;"></div>
+  </form>
+
+  <script>
+    const musicBtn = document.getElementById("musicBtn");
+    const audio = document.getElementById("backgroundMusic");
+
+    audio.volume = 0.15; // ձայնի մակարդակ
+
+    musicBtn.addEventListener("click", async () => {
+      if (audio.paused) {
+        try {
+          audio.currentTime = 5; // ← հենց էստեղ դնում ես քանի վայրկյանից սկսի
+          await audio.play();
+          musicBtn.classList.add("playing");
+        } catch (e) {
+          console.log("Play error:", e);
+        }
+      } else {
+        audio.pause();
+        musicBtn.classList.remove("playing");
+      }
+    });
+
+    // Քաունթդաուն
+    const targetDate = new Date("2025-10-05T00:00:00").getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance < 0) {
+        document.getElementById("countdown").innerHTML = "Օրը հասել է!";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").textContent = days.toString().padStart(2, '0');
+      document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
+      document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
+      document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // RSVP ֆունկցիոնալություն
+    (function(){
+      const FORM = document.getElementById('rsvpForm');
+      const OK   = document.getElementById('successMessage');
+      const ERR  = document.getElementById('errorMessage');
+      const ENDPOINT = "https://script.google.com/macros/s/AKfycbw-e_U0nNhW8uBdjFNnYxuiAdfv5EYcIVq-Y_WqwKys6zv8Fz6ygyncnp8zK44jr0qq3w/exec";
+
+      // submit handler — fire & forget
+      FORM.addEventListener('submit', (e) => {
+        e.preventDefault();
+        ERR.style.display = 'none';
+        ERR.classList.remove('show');
+        OK.style.display = 'none';
+        OK.classList.remove('show');
+
+             // full_name
+              const first = (FORM.querySelector('[name="firstName"]').value || '').trim();
+              const last  = (FORM.querySelector('[name="lastName"]').value  || '').trim();
+              if (!first || !last){
+                ERR.innerHTML = '<div class="success-icon">❌</div><div class="message-title">Սխալ</div><div class="message-text">Խնդրում ենք լրացնել անունը և ազգանունը</div>';
+                ERR.style.display = 'block';
+                setTimeout(() => ERR.classList.add('show'), 10);
+                return;
+              }
+
+              const resp = (document.getElementById('responseInput').value || '').trim();
+              if (!resp){
+                ERR.innerHTML = '<div class="success-icon">❌</div><div class="message-title">Սխալ</div><div class="message-text">Ընտրեք՝ գալիս եք, թե ոչ</div>';
+                ERR.style.display = 'block';
+                setTimeout(() => ERR.classList.add('show'), 10);
+                return;
+              }
+
+              const fd = new FormData(FORM);
+              fd.set('full_name', `${first} ${last}`);
+              fd.set('response', resp);
+              fd.set('attend',  resp);
+              fd.append('timestamp', new Date().toISOString());
+
+              // 🔥 fire-and-forget (չենք await անում) + keepalive որ նույնիսկ էջը փոխելիս գնա
+              fetch(ENDPOINT, { method:'POST', body: fd, keepalive: true }).catch(()=>{});
+
+              // ✅ անմիջապես success ցույց տուր
+              const responseText = resp === 'ԳԱԼԻՍ ԵՄ' ? 
+                'Շնորհակալություն, մենք ստացել ենք Ձեր պատասխանը։<br>Ուրախ ենք, որ կլինեք մեզ հետ։' :
+                'Շնորհակալություն, մենք ստացել ենք Ձեր պատասխանը։<br>Կարոտելու ենք Ձեզ։';
+
+              OK.innerHTML = `<div class="message-title">Շնորհակալություն</div><div class="message-text">${responseText}</div>`;
+              OK.style.display = 'block';
+              setTimeout(() => OK.classList.add('show'), 10);
+
+              // Հաղորդագրությունը թաքցնել 4 վայրկյանից հետո
+              setTimeout(() => {
+                OK.classList.add('hide');
+                setTimeout(() => {
+                  OK.style.display = 'none';
+                  OK.classList.remove('show', 'hide');
+                }, 500);
+              }, 4000);
+
+              // Form մաքրել
+              FORM.reset();
+              document.getElementById('responseInput').value = '';
+            });
+
+            // կոճակներ → դնում ենք պատասխանն ու submit
+            window.setResponseAndSubmit = function(answer){
+              document.getElementById('responseInput').value = answer; // 'ԳԱԼԻՍ ԵՄ' / 'ՉԵՄ ԳԱԼԻՍ'
+              if (FORM.requestSubmit) FORM.requestSubmit();
+              else FORM.dispatchEvent(new Event('submit', { bubbles:true, cancelable:true }));
+            };
+            })();
+
+
+            </script>
+
+            </body>
+            </html>
